@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+{% block title %}Vault{% endblock %}
+
+{% block main %}
+<!-- Main container for the vault page -->
+<div class="container mt-5">
+    <!-- Page title -->
+    <h2 class="text-center fw-bold text-primary mb-4">Your Vault</h2>
+
+    <!-- Search bar for filtering entries -->
+    <input
+        type="text"
+        id="search"
+        class="form-control mb-4"
+        placeholder="Search vault..."
+    />
+
+    <!-- Check if there are any entries -->
+    {% if entries %}
+    <div class="row g-4 justify-content-center">
+        <!-- Loop through each entry in the vault -->
+        {% for e in entries %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 rounded-4 h-100">
+                <div class="card-body text-center p-4">
+                    <!-- Display site name -->
+                    <h4 class="card-title text-dark fw-semibold mb-2">{{ e.site }}</h4>
+                    <hr class="mt-0 mb-3 opacity-25">
+
+                    <!-- Display username -->
+                    <p class="text-muted mb-1">
+                        <span class="fw-semibold">Username:</span>
+                        <span class="fw-medium">{{ e.site_username or "—" }}</span>
+                    </p>
+
+                    <!-- Display password (hidden by default) -->
+                    <p class="text-muted mb-2">
+                        <span class="fw-semibold">Password:</span>
+                        <span class="fw-medium" id="pw-{{ e.id }}">********</span>
+                        <!-- Button to show or hide the password -->
+                        <button
+                            class="btn btn-sm btn-outline-secondary ms-2"
+                            type="button"
+                            onclick="togglePassword('{{ e.id }}', '{{ e.decrypted }}')">
+                            Show
+                        </button>
+                    </p>
+
+                    <!-- Show notes if they exist -->
+                    {% if e.notes %}
+                    <p class="text-muted small fst-italic mt-3 mb-2">
+                        "{{ e.notes }}"
+                    </p>
+                    {% endif %}
+
+                    <!-- Edit and delete buttons -->
+                    <div class="d-flex justify-content-center gap-3 mt-3">
+                        <a href="/edit/{{ e.id }}" class="btn btn-outline-primary btn-sm px-3">
+                            <i class="bi bi-pencil-square"></i> Edit
+                        </a>
+                        <form action="/remove" method="post" style="display:inline;">
+                            <input type="hidden" name="site" value="{{ e.site }}">
+                            <button class="btn btn-outline-danger btn-sm px-3" type="submit">
+                                <i class="bi bi-trash3"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- If no entries exist, show this message -->
+    {% else %}
+    <div class="text-center text-muted mt-5">
+        <p class="fs-5">No passwords stored yet.</p>
+        <a href="/add" class="btn btn-primary mt-2">
+            <i class="bi bi-plus-circle"></i> Add One
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // This function shows or hides a password when you click "Show"
+    function togglePassword(id, actualPassword) {
+        const pwSpan = document.getElementById(`pw-${id}`)
+        if (pwSpan.textContent === "********") {
+            pwSpan.textContent = actualPassword
+        } else {
+            pwSpan.textContent = "********"
+        }
+    }
+
+    // This part makes the search bar work (live filtering)
+    const searchInput = document.getElementById("search")
+
+    searchInput.addEventListener("keyup", function() {
+        const filter = searchInput.value.toLowerCase()
+        const cards = document.querySelectorAll(".card")
+
+        cards.forEach(card => {
+            const siteName = card.querySelector(".card-title").textContent.toLowerCase()
+            const username = card.querySelector(".text-muted span.fw-medium")?.textContent.toLowerCase() || ""
+            const notes = card.querySelector(".fst-italic")?.textContent.toLowerCase() || ""
+
+            const matches =
+                siteName.includes(filter) ||
+                username.includes(filter) ||
+                notes.includes(filter)
+
+            // Show or hide cards depending on if they match the search
+            if (matches) {
+                card.parentElement.style.display = ""
+            } else {
+                card.parentElement.style.display = "none"
+            }
+        })
+    })
+</script>
+{% endblock %}

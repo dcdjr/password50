@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block title %}Edit Entry{% endblock %}
+
+{% block main %}
+<!-- Main container for the edit password page -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <!-- Card that holds the edit form -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4">
+
+                    <!-- Page title -->
+                    <h3 class="text-center fw-bold mb-4 text-primary">Edit Password Entry</h3>
+
+                    <!-- Form that sends updated data to /edit/<id> -->
+                    <form action="/edit/{{ entry.id }}" method="post">
+
+                        <!-- Site name input -->
+                        <div class="mb-3">
+                            <label for="site" class="form-label fw-semibold">Site Name</label>
+                            <input
+                                class="form-control rounded-3"
+                                id="site"
+                                name="site"
+                                type="text"
+                                value="{{ entry.site }}"
+                                required
+                            >
+                        </div>
+
+                        <!-- Username input -->
+                        <div class="mb-3">
+                            <label for="site_username" class="form-label fw-semibold">Username</label>
+                            <input
+                                class="form-control rounded-3"
+                                id="site_username"
+                                name="site_username"
+                                type="text"
+                                value="{{ entry.site_username }}"
+                            >
+                        </div>
+
+                        <!-- Password input (shows decrypted password so user can edit it) -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-semibold">Password</label>
+                            <input
+                                class="form-control rounded-3"
+                                id="password"
+                                name="password"
+                                type="text"
+                                value="{{ entry.decrypted_password }}"
+                                required
+                            >
+                        </div>
+
+                        <!-- Optional notes section -->
+                        <div class="mb-4">
+                            <label for="notes" class="form-label fw-semibold">Notes (optional)</label>
+                            <textarea
+                                class="form-control rounded-3"
+                                id="notes"
+                                name="notes"
+                                rows="2"
+                                placeholder="Add or update notes here..."
+                            >{{ entry.notes or '' }}</textarea>
+                        </div>
+
+                        <!-- Submit button to save changes -->
+                        <div class="d-grid">
+                            <button class="btn btn-success btn-lg rounded-3 fw-semibold" type="submit">
+                                <i class="bi bi-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

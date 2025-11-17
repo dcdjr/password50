@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}Change Password{% endblock %}
+
+{% block main %}
+<!-- Main container for changing the master password -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <!-- Card for password change form -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4">
+                    <!-- Page title -->
+                    <h3 class="text-center fw-bold text-primary mb-4">Change Master Password</h3>
+
+                    <!-- Password change form -->
+                    <form action="/change" method="post">
+                        <!-- Current password input -->
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label fw-semibold">Current Password</label>
+                            <input
+                                autocomplete="off"
+                                autofocus
+                                class="form-control rounded-3"
+                                id="current_password"
+                                name="current_password"
+                                type="password"
+                                placeholder="Enter current password"
+                                required
+                            >
+                        </div>
+
+                        <!-- New password input -->
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label fw-semibold">New Password</label>
+                            <input
+                                class="form-control rounded-3"
+                                id="new_password"
+                                name="new_password"
+                                type="password"
+                                placeholder="Enter new password"
+                                required
+                            >
+                        </div>
+
+                        <!-- Confirm new password input -->
+                        <div class="mb-4">
+                            <label for="confirmed_new_password" class="form-label fw-semibold">Confirm New Password</label>
+                            <input
+                                class="form-control rounded-3"
+                                id="confirmed_new_password"
+                                name="confirmed_new_password"
+                                type="password"
+                                placeholder="Re-enter new password"
+                                required
+                            >
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="d-grid">
+                            <button class="btn btn-success btn-lg fw-semibold rounded-3" type="submit">
+                                <i class="bi bi-key-fill me-1"></i> Change Password
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

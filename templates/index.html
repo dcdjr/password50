@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+
+{% block main %}
+<!-- Main container for the home page -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Card that displays the main welcome message -->
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-5 text-center">
+
+                    <!-- Page title -->
+                    <h2 class="fw-bold text-primary mb-3">Welcome to Your Password Vault</h2>
+
+                    <!-- Description text explaining the app -->
+                    <p class="text-muted mb-4 fs-6">
+                        Securely store, manage, and access all your passwords in one place.
+                        Use the navigation above to add new entries, view your vault, or make changes.
+                    </p>
+
+                    <!-- Buttons to view vault or add a new password -->
+                    <div class="d-flex justify-content-center gap-3 mt-3">
+                        <a href="/vault" class="btn btn-primary btn-lg rounded-3 fw-semibold">
+                            <i class="bi bi-lock-fill me-1"></i> View Vault
+                        </a>
+                        <a href="/add" class="btn btn-outline-primary btn-lg rounded-3 fw-semibold">
+                            <i class="bi bi-plus-circle me-1"></i> Add Password
+                        </a>
+                    </div>
+
+                    <!-- Divider line -->
+                    <hr class="my-4 opacity-25">
+
+                    <!-- Show which user is logged in -->
+                    <p class="text-muted small mb-0">
+                        Logged in as <strong>User #{{ session['user_id'] }}</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
