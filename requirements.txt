@@ -4,3 +4,4 @@ cs50
 cryptography
 python-dotenv
 Werkzeug
+gunicorn
