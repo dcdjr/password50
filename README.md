@@ -1,6 +1,6 @@
 # Password50
-#### Video Demo: [DEMO URL](https://youtu.be/RPW19hCJn6E)
 > Educational project built for Harvard CS50. This is not intended to be used as a production password manager.
+#### Video Demo: [DEMO URL](https://youtu.be/RPW19hCJn6E)
 #### Description:
 
 
