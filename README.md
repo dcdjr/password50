@@ -1,7 +1,7 @@
 # Password50
 > Educational project built for Harvard CS50. This is not intended to be used as a production password manager.
 #### Video Demo: [DEMO URL](https://youtu.be/RPW19hCJn6E)
-#### Description:
+## Description:
 
 
 Password50 is a secure, full stack password manager that I built for my CS50 final project. I wanted it to feel like something I’d actually use, not just a quick assignment. The app lets users register, log in, and store encrypted passwords for the different sites they use. Once you’re signed in, you can add new entries, edit them, delete them, change your master password, and quickly filter everything with a search bar.
