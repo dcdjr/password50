@@ -1,154 +1,87 @@
 # Password50
+
 > Educational project built for Harvard CS50. This is not intended to be used as a production password manager.
-#### Video Demo: [DEMO URL](https://youtu.be/RPW19hCJn6E)
-## Description
 
+Video demo: [Password50 Demo](https://youtu.be/RPW19hCJn6E)
 
-Password50 is a secure, full stack password manager that I built for my CS50 final project. I wanted it to feel like something I’d actually use, not just a quick assignment. The app lets users register, log in, and store encrypted passwords for the different sites they use. Once you’re signed in, you can add new entries, edit them, delete them, change your master password, and quickly filter everything with a search bar.
+## Overview
 
-All vault entries are encrypted using Fernet symmetric encryption before they ever hit the database, and all master passwords are hashed using Werkzeug. The whole project combines the main things we learned in CS50 — Flask, SQL, sessions, templating, and backend security — into one clean and functional application.
+Password50 is a full-stack password manager built with Flask, SQLite, Jinja templates, and Bootstrap.
 
----
+The app lets users register, log in, and manage encrypted vault entries for different sites. It was built as a CS50 final project to practice authentication, database design, encryption, server-side rendering, and backend security fundamentals.
 
-## How the App Works
+## Features
 
-When someone registers, the server checks if the username is already taken. If not, the master password is hashed and stored in the `users` table. The plain password is never stored anywhere. After logging in, the user’s `user_id` goes into the Flask session, and that’s how the app knows which vault entries to show.
+- User registration and login
+- Session-based authentication
+- Add, edit, search, and delete vault entries
+- Encrypted stored passwords using Fernet symmetric encryption
+- Hashed master passwords using Werkzeug
+- SQLite database with user-owned vault records
+- Server-side templates with Jinja
+- Bootstrap-based interface
 
-### Adding Password Entries
+## Security Notes
 
-To save a site’s login info, the user enters:
-- Site name  
-- Username for that site  
-- Password to store  
-- Optional notes  
+This project is educational. It demonstrates important security concepts, but it should not be treated as a production password manager.
 
-Before saving anything, the password is encrypted with a Fernet key (loaded through `.env` using `python-dotenv`). The database only ever stores the encrypted version. When the vault loads, the server decrypts each password in memory so the user can read it, but the decrypted text never gets written back.
+Current design choices include:
 
-### Editing and Removing Entries
+- Master passwords are hashed before storage
+- Vault passwords are encrypted before being written to the database
+- SQL queries use parameterized inputs
+- Each vault entry is associated with the logged-in user
+- The Fernet key is loaded from environment configuration
 
-When editing an entry, the app:
+For a production-grade password manager, the design would need stronger key management, per-user key derivation, stricter session hardening, audit logging, recovery flows, secure deployment practices, and significantly more testing.
 
-1. Gets the entry that matches both the entry ID and the logged in user  
-2. Decrypts the password  
-3. Shows an editable form with the current data  
-4. Re-encrypts and updates the record when the form is submitted  
+## How It Works
 
-Removing simply deletes the row after confirming ownership. All SQL uses CS50’s parameterized queries, so there’s no injection risk.
+When a user registers, the server checks whether the username is available, hashes the master password, and stores the user record.
 
-### Searching
+After login, the user's ID is stored in the Flask session. Vault routes use that session value to show and modify only the current user's entries.
 
-The vault has a simple JavaScript search bar. As you type, entries that don’t match the text get hidden. It’s a small feature, but it genuinely makes the app easier to use when you have a bunch of entries saved.
-
-### Changing Master Password
-
-On the `/change` page, users can update their master password by providing:
-- The current password  
-- A new password  
-- Confirmation of the new password  
-
-The server checks the old hash and, if correct, replaces it with a new one. After changing your password, you get logged out for security.
-
----
+When a user saves a site password, the app encrypts the password with Fernet before inserting it into SQLite. When the vault loads, encrypted passwords are decrypted in memory for display.
 
 ## Database Schema
 
-The app uses a SQLite database named **`password_manager.db`**.
+The app uses a SQLite database named `password_manager.db`.
 
-### `users` Table
+### `users`
 
-- `id` — primary key  
-- `username` — unique username  
-- `master_hash` — hashed master password  
+- `id` — primary key
+- `username` — unique username
+- `master_hash` — hashed master password
 
-### `passwords` Table
+### `passwords`
 
-- `id` — primary key  
-- `user_id` — foreign key referencing `users.id`  
-- `site` — name of the site or app  
-- `site_username` — username for that site  
-- `encrypted_password` — Fernet-encrypted ciphertext  
-- `notes` — optional notes  
-- `created_at` — timestamp  
+- `id` — primary key
+- `user_id` — foreign key referencing `users.id`
+- `site` — site or app name
+- `site_username` — username for that site
+- `encrypted_password` — Fernet-encrypted ciphertext
+- `notes` — optional notes
+- `created_at` — timestamp
 
-Each password row belongs to exactly one user. Even if someone got the database file, they’d only see encrypted password strings.
+## Project Structure
 
----
-
-## File Structure
-
-Here’s what the main files do:
-
-### `app.py`
-
-Handles:
-- All the routes (login, logout, register, vault, add, edit, remove, change)  
-- Session setup  
-- Database queries  
-- Input validation  
-- Calling helper functions for encryption/decryption  
-
-Everything that should be protected is wrapped with the `login_required` decorator.
-
-### `helpers.py`
-
-Contains the core utilities:
-- `encrypt_password()` — Fernet encryption  
-- `decrypt_password()` — Fernet decryption  
-- `apology()` — CS50-style apology page  
-- `login_required()` — makes sure the user is logged in  
-
-The Fernet key is loaded from the `.env` file at startup.
-
-### Templates (`templates/` folder)
-
-All HTML pages written with Jinja2:
-
-- `layout.html` — navbar + base layout  
-- `index.html` — homepage after login  
-- `login.html`  
-- `register.html`  
-- `vault.html` — the main vault view + search bar  
-- `add.html`  
-- `edit.html`  
-- `change.html`  
-- `apology.html`  
-
-### Static Files (`static/`)
-
-Only contains CSS. Bootstrap handles most of the layout, and my CSS tweaks the spacing and styling to make things cleaner.
-
-### `requirements.txt`
-
-Dependencies needed to run the app:
-
-- Flask  
-- Flask-Session  
-- cs50  
-- cryptography  
-- python-dotenv  
-- Werkzeug  
-
----
-
-## Design Choices
-
-One of the decisions I thought about was encryption. I chose to use one Fernet key for all entries instead of generating separate keys per user. For a project at this scale, one key keeps things simple and still provides strong security.
-
-I also stuck with server-side rendering using Jinja rather than trying to build a full SPA. That lined up with the rest of the course and made everything easier to debug and maintain.
-
-I added the optional notes field and timestamp to the `passwords` table just to make it feel a bit more like a real password manager rather than bare minimum functionality.
-
----
+```text
+app.py              Flask routes, sessions, validation, and database operations
+helpers.py          Encryption/decryption helpers, login guard, and CS50 apology helper
+templates/          Jinja templates for the app pages
+static/             CSS and static assets
+requirements.txt    Python dependencies
+```
 
 ## What I Learned
 
-Building Password50 gave me solid experience with:
-- Handling passwords securely  
-- Encryption and key management  
-- Flask routing and sessions  
-- SQL and database schema design  
-- Working with templates  
-- Validating user input  
-- Debugging across the full stack  
+This project gave me practical experience with:
 
-Overall, I’m really happy with how Password50 turned out. It’s functional, realistic, and honestly something I could build on later. If I decide to keep working on it, I’d probably add a password generator, categories/tags, and maybe export/import features. But for CS50, it does exactly what I wanted and helped me learn full stack development more deeply.
+- Flask routing and sessions
+- Authentication flows
+- Password hashing
+- Symmetric encryption
+- SQLite schema design
+- CRUD operations
+- Server-side rendering with Jinja
+- Input validation and ownership checks
